@@ -1,4 +1,5 @@
 const url = `https://fdo.rocketlaunch.live/json/launches/next/5/`;
+let flightData = "";
 
 async function fetchData() {
   try {
@@ -6,28 +7,33 @@ async function fetchData() {
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
-    const data = await res.json(); 
-    console.log(data);
+    const data = await res.json();
+    flightData = data.result;
 
-    const filteredData = filterLaunches(data);
+    //console.log(flightData); ////////////////For checking log of ALL flights
 
-
+    const filteredData = filterLaunches(flightData);
   } catch (error) {
-    console.error('Fetch error:', error);
+    console.error("Fetch error:", error);
   }
 }
 
-
-
 function filterLaunches(data) {
-          const localLancnches = [];
-    data.result.forEach(flight => {
-        
-  
-
-        if(flight.pad.location.name.includes("Vandenberg")) {
-            localLancnches.push(flight);}
-
-    });
-        localLancnches.length === 0 ? console.log("No launches from Vandenberg found.") : console.log(localLancnches);
+  const localLaunches = [];
+  data.forEach((flight) => {
+    if (flight.pad.location.name.toLowerCase().includes("cape")) {
+      localLaunches.push(flight);
+    }
+  });
+  const len = localLaunches.length;
+  if (len === 0) {
+    console.log("No launches from Vandenberg found.");
+  } else if (len === 1) {
+    console.log(`1 Launch scheduled from Vandenberg found`, localLaunches);
+  } else {
+    console.log(
+      localLaunches.length + ` launches scheduled from Vandenberg found`,
+      localLaunches,
+    );
+  }
 }
